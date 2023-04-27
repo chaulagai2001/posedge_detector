@@ -1,1 +1,57 @@
 
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+
+entity posedge_moore is
+    Port ( clk : in STD_LOGIC;
+           din : in STD_LOGIC;
+           dout : out STD_LOGIC;
+           count : out INTEGER);
+end posedge_moore;
+
+architecture Behavioral of posedge_moore is
+type state is (zero, edge, one);
+signal present_state, next_state: state;
+signal edge_count: integer range 0 to 32767 := 0;
+begin
+--for clock
+
+process (clk)
+begin
+if rising_edge(clk) then
+case present_state is
+when zero=>
+if (din='1') then
+  present_state<=edge;
+  dout<='1';
+  edge_count <= edge_count + 1;
+else
+  present_state<=zero;
+  dout<='0';
+  end if;
+
+when edge=>
+if(din='1') then
+  present_state<=one;
+  dout<='1';
+else
+   present_state<=zero;
+    dout<='0';
+end if;
+
+when one=>
+if (din='1') then
+  present_state<=one;
+  dout<='0';
+else
+   present_state<=zero;
+    dout<='0';
+end if; 
+end case;
+end if;
+end process;
+count <= edge_count;
+end Behavioral;
+

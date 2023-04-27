@@ -1,1 +1,35 @@
 
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity posedge_simple is
+    Port (clock : in STD_LOGIC;
+           output : out STD_LOGIC;
+           count:out integer range 0 to 2**31-1 );
+end posedge_simple;
+
+architecture Behavioral of posedge_simple is
+signal d_delay: std_logic;
+signal d_out: std_logic;
+signal count_internal: integer range 0 to 2**31-1:=0;
+begin
+d_delay<= not clock after 1 ns;
+process (d_delay, d_out)
+begin
+if rising_edge(d_delay) then
+d_out<=d_delay;
+count_internal<=count_internal+1;
+end if;
+end process;
+output <= not (d_delay nand d_out);
+count<=count_internal;
+end Behavioral;

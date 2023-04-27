@@ -1,1 +1,70 @@
 
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+
+entity posedge_mealy_tb is
+--  Port ( );
+end posedge_mealy_tb;
+
+architecture Behavioral of posedge_mealy_tb is
+component posedge_moore is
+    Port ( clk : in STD_LOGIC;
+           din : in STD_LOGIC;
+           dout : out STD_LOGIC;
+           count : out INTEGER);
+end component;
+-- input signals
+signal clk: std_logic;
+signal din: std_logic;
+--output signals
+signal dout: std_logic;
+signal count: integer range 0 to 32767 := 0;
+constant clk_period: time:= 20ns;
+begin
+--unit under test
+uut: posedge_moore PORT MAP (
+clk => clk,
+din => din,
+dout => dout,
+count=>count
+);
+clk_process :process
+begin
+clk <= '0';
+wait for clk_period/2;
+clk <= '1';
+wait for clk_period/2;
+end process;
+
+stim_proc: process 
+begin
+din <= '0';
+wait for 20 ns;
+ 
+din <= '1';
+wait for 20 ns;
+ 
+din <= '0'; 
+wait for 20 ns;
+ 
+din <= '1'; 
+wait for 20 ns;
+ 
+din <= '0';
+wait for 20 ns;
+ 
+din <= '1';
+wait for 20 ns;
+ 
+din <= '0';
+wait for 20 ns;
+ 
+din <= '1';
+end process;
+monitor_process : process (count)
+    begin
+        report "Edge count: " & integer'image(count);
+    end process;
+end Behavioral;
